@@ -2,12 +2,13 @@ from bs4 import BeautifulSoup as bs
 import requests
 import pandas as pd
 
+
 # Create a list of all the pages I need to scrape
 
 links = []
 dm = []
 
-for i in range(93):
+for i in range(94):
     url = "https://www.setlist.fm/setlists/taylor-swift-3bd6bc5c.html?page=" + str(i + 1)
     r = requests.get(url)
     soup = bs(r.content, "lxml")
@@ -42,18 +43,18 @@ for item in links:
 
     r = requests.get(item)
     soup = bs(r.content, "lxml")
-    for each in soup.find_all('li', class_='setlistParts song'):
-        counter = 0
-        for songsone in soup.find_all('div', class_='songPart'):
-            counter += 1
-            counter_list.append(counter)
-            songstwo = songsone.text
-            songs.append(songstwo.encode('utf-8').rstrip().strip())
 
+    counter = 0
+    for songsone in soup.find_all('div', class_='songPart'):
+        counter += 1
+        counter_list.append(counter)
+        songstwo = songsone.text
+        songs.append(songstwo.encode('utf-8').rstrip().strip())
 
-        a = soup.find('small').get_text()
-        a_clean = a.replace('\n','')
-        special.append(a_clean)
+    for each in soup.find_all('small', class_ = "fontSmall"):
+        each_clean = each.get_text()
+        each_cleaner = each_clean.replace("\n","")
+        special.append(each_cleaner)
 
     result = [[x,y,z] for x,y,z in zip(counter_list,songs,special)]
 
@@ -68,7 +69,7 @@ for item in links:
 
 #Move it into a dataframe and print to a csv
     df = pd.DataFrame(dm, columns=['Counter', 'Track','Special','Date','Location'])
-    df.to_csv(r'/Users/margaretschaub/Desktop/taylow_swift_setlist2.csv')
+    df.to_csv(r'/Users/margaretschaub/Desktop/taylor_swift_setlist.csv')
 
 
 
